@@ -6,19 +6,16 @@
 
 import axios from "axios";
 
-// const myCard = axios.get(`https://api.github.com/users/RoryLariviere`);
 const entryPoint = document.querySelector(`.cards`);
 
-// console.log(myCard);
-
-// myCard.then(res => {
-//   cardsHolder.appendChild(cardMaker(res));
-//   console.log(res);
-// })
-// .catch(err => {
-//   console.log(err);
-// })
-
+axios.get(`https://api.github.com/users/RoryLariviere`)
+  .then(res => {
+    const futureData = res.data;
+    entryPoint.appendChild(cardMaker(futureData));
+  })
+  .catch(err => {
+    console.log(err);
+  })
 
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
@@ -44,7 +41,21 @@ const entryPoint = document.querySelector(`.cards`);
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+  `tetondan`,
+  `dustinmyers`,
+  `justsml`,
+  `luishrd`,
+  `bigknell`
+];
+
+followersArray.forEach(user => {
+  axios.get(`https://api.github.com/users/${user}`)
+  .then(res => {
+    const futureFollowersData = res.data;
+    entryPoint.appendChild(cardMaker(futureFollowersData));
+  })
+})
 
 function cardMaker(data){
   const card = document.createElement(`div`);
@@ -54,10 +65,11 @@ function cardMaker(data){
   const userNme = document.createElement(`p`);
   const locale = document.createElement(`p`);
   const prof = document.createElement(`p`);
+  const profLink = document.createElement(`a`);
   const followersCount = document.createElement(`p`);
   const followingCount = document.createElement(`p`);
   const bioInf = document.createElement(`p`);
-  console.log(data);
+  
   card.classList.add(`card`);
   cardInf.classList.add(`card-info`);
   nameH3.classList.add(`name`);
@@ -68,8 +80,10 @@ function cardMaker(data){
   userNme.textContent = data.login;
   locale.textContent = data.location;
   prof.textContent = `Profile: `;
-  followersCount.textContent = data.followers;
-  followingCount.textContent = data.following;
+  profLink.href = data.html_url;
+  profLink.textContent = data.html_url;
+  followersCount.textContent = `Followers: ${data.followers}`;
+  followingCount.textContent = `Following: ${data.following}`;
   bioInf.textContent = `Bio: ${data.bio}`;
 
   card.appendChild(userImg);
@@ -78,26 +92,14 @@ function cardMaker(data){
   cardInf.appendChild(userNme);
   cardInf.appendChild(locale);
   cardInf.appendChild(prof);
+  prof.appendChild(profLink);
   cardInf.appendChild(followersCount);
   cardInf.appendChild(followingCount);
   cardInf.appendChild(bioInf);
 
-
-
   return card;
 
 }
-
-
-  axios.get(`https://api.github.com/users/RoryLariviere`)
-  .then(res => {
-    const futureData = res.data;
-    entryPoint.appendChild(cardMaker(futureData));
-  })
-  .catch(err => {
-    console.log(err);
-  })
-
 
   // STEP 3: Create a function that accepts a single object as its only argument.
   //   Using DOM methods and properties, create and return the following markup:
